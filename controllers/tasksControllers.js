@@ -6,52 +6,44 @@ const {
   deleteTasksService,
 } = require('../services/tasksServices');
 
-const getTasks = async (req, res, next) => {
-  try {
-    const tasks = await getTasksService();
-    res.status(200).json(tasks);
-  } catch (error) {
-    next(error);
-  }
+const { catchAsync } = require('../utils/catchAsync');
+
+let getTasks = async (req, res) => {
+  const tasks = await getTasksService();
+  res.status(200).json(tasks);
 };
 
-const getTask = async (req, res, next) => {
-  try {
-    const { taskId } = req.params;
-    const task = await getTaskService(taskId);
-    res.status(200).json(task);
-  } catch (error) {
-    next(error);
-  }
+getTasks = catchAsync(getTasks);
+
+const getTask = catchAsync(async (req, res) => {
+  const { taskId } = req.params;
+  const task = await getTaskService(taskId);
+  res.status(200).json(task);
+});
+
+const createTask = async (req, res) => {
+  const createdTask = await createTasksService(req.body);
+  res.status(201).json(createdTask);
 };
 
-const createTask = async (req, res, next) => {
-  try {
-    const createdTask = await createTasksService(req.body);
-    res.status(201).json(createdTask);
-  } catch (error) {
-    next(error);
-  }
+const updateTasks = async (req, res) => {
+  const { taskId } = req.params;
+  const updatedTask = await updateTasksService(taskId, req.body);
+  res.status(200).json(updatedTask);
 };
 
-const updateTasks = async (req, res, next) => {
-  try {
-    const { taskId } = req.params;
-    const updatedTask = await updateTasksService(taskId, req.body);
-    res.status(200).json(updatedTask);
-  } catch (error) {
-    next(error);
-  }
+let deleteTasks = async (req, res) => {
+  const { taskId } = req.params;
+  const deletedTaskId = await deleteTasksService(taskId);
+  res.status(200).json({ id: taskId });
 };
 
-const deleteTasks = async (req, res, next) => {
-  try {
-    const { taskId } = req.params;
-    const deletedTaskId = await deleteTasksService(taskId);
-    res.status(200).json({ id: taskId });
-  } catch (error) {
-    next(error);
-  }
-};
+deleteTasks = catchAsync(deleteTasks);
 
-module.exports = { getTasks, getTask, createTask, updateTasks, deleteTasks };
+module.exports = {
+  getTasks,
+  getTask,
+  createTask: catchAsync(createTask),
+  updateTasks,
+  deleteTasks,
+};
