@@ -1,4 +1,4 @@
-const { Task } = require('../db/TasksModel');
+const { Task } = require('./../models/Task');
 
 const getTasksService = async (page, limit) => {
   const skip = (page - 1) * limit;

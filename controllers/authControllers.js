@@ -1,6 +1,11 @@
 const { catchAsync } = require('../utils/catchAsync');
 
-let signup = async (req, res) => {};
+const { signupService } = require('./../services/authServices');
+
+let signup = async (req, res) => {
+  const user = await signupService(req.body);
+  res.status(201).json(user);
+};
 
 signup = catchAsync(signup);
 
