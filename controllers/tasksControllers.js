@@ -9,7 +9,8 @@ const {
 const { catchAsync } = require('../utils/catchAsync');
 
 let getTasks = async (req, res) => {
-  const tasks = await getTasksService();
+  const { page, limit = 10 } = req.query;
+  const tasks = await getTasksService(page, limit);
   res.status(200).json(tasks);
 };
 
